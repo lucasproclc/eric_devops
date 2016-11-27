@@ -5,6 +5,8 @@ import csv
 import json
 import StringIO
 
+### remember to simplify your code - Eric.Lucas
+
 #Get this information from the CenturyLink Cloud Portal
 payload = {'APIKey': 'xxxxxx', 'Password': 'xxxxx'}
 

@@ -22,8 +22,8 @@ print "Authenticated"
 
 
 #Create an intra data Center Firewall Policy
-payload2 = {"destinationAccount": "CCEL","source": ["10.122.207.0/24"], "destination": ["10.121.75.0/24"],"ports": ["tcp/22"]}
-r1 = requests.post("https://api.ctl.io/v2-experimental/firewallPolicies/CCEL/UC1/", data=json.dumps(payload2), cookies=r.cookies, headers=headers)
+payload2 = {"destinationAccount": “xxx”,”source": ["10.1.1.1/24"], "destination": ["10.0.0.1/24"],"ports": ["tcp/22"]}
+r1 = requests.post("https://api.ctl.io/v2-experimental/firewallPolicies/xxxx/UC1/", data=json.dumps(payload2), cookies=r.cookies, headers=headers)
 
 print json.dumps(r1.json(), indent=4)
 
