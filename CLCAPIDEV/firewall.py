@@ -5,7 +5,7 @@ import requests
 
 
 headers = {'content-type': 'application/json'}
-payload = {'username': 'eric.lucas.xxx', 'password': 'password'}
+payload = {'username': 'eric.xxx', 'password': ‘xxxxx’}
 
 r = requests.post("https://api.ctl.io/v2/authentication/login", data=payload)
 print r
