@@ -1,8 +1,0 @@
-#!/bin/bash -e
-
-if ! pgrep -f nginx > /dev/null
-then 
-    nginx
-else
-    nginx -s reload
-fi
