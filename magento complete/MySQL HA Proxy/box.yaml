@@ -1,0 +1,40 @@
+description: HA proxy for MySQL
+icon: f6deab86-3744-4be3-bd48-804697859423
+id: f6deab86-3744-4be3-bd48-804697859423
+name: MySQL HA Proxy
+requirements:
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- automatic_updates: major
+  name: haproxy
+  required: false
+  type: Box
+  value: 87830b58-ceaf-4790-81d1-4511816b012f
+  visibility: private
+- name: http
+  required: false
+  scope: haproxy
+  type: Port
+  value: '3306'
+  visibility: internal
+- name: fallback_binding_port
+  required: false
+  scope: haproxy
+  type: Port
+  value: '3306'
+  visibility: internal
+- name: CONFIG_FILE
+  required: false
+  scope: haproxy
+  type: File
+  value: files/haproxy.conf
+  visibility: internal
+- name: MODE
+  options: http,tcp,health
+  required: false
+  scope: haproxy
+  type: Options
+  value: tcp
+  visibility: internal
+

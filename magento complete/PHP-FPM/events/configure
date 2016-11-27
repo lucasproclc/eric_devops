@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+if [[ -e /etc/redhat-release || -e /etc/system-release ]]
+then
+    curl -ks {{ PHP_INI }} | elasticbox config -o /etc/php.ini
+    curl -ks {{ PHP_FPM_CONF }} | elasticbox config -o /etc/php-fpm.d/www.conf
+else
+    curl -ks {{ PHP_INI }} | elasticbox config -o /etc/php5/fpm/php.ini
+    curl -ks {{ PHP_FPM_CONF }} | elasticbox config -o /etc/php5/fpm/pool.d/www.conf
+fi
+
+# Allow nginx user to write on the php-fpm logs directory
+mkdir -p {{ LOGS_DIRECTORY }}
+chown {{ PHP_USER }}:{{ PHP_GROUP }} {{ LOGS_DIRECTORY }} -R

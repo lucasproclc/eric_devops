@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# set -e
+
+{% if redis.haproxy.servers %}
+cat /etc/haproxy/redis.cfg >> /etc/haproxy/haproxy.cfg
+service haproxy restart
+{% endif %}
+
+if [[ ! -L "{{ MAGENTO_PATH }}/media" ]]
+then
+    cp -rl {{ MAGENTO_PATH }}/media/* {{ nfs.LOCAL_PATH }}
+    rm -rf {{ MAGENTO_PATH }}/media
+    ln -snf {{ nfs.LOCAL_PATH }} {{ MAGENTO_PATH }}/media
+fi
+
+curl -ks {{ MAGENTO_CONF }} | elasticbox config -o /etc/nginx/conf.d/magento.conf
+curl -ks {{ MAGENTO_CONFIG }} | elasticbox config -o {{ MAGENTO_PATH}}/app/etc/local.xml
+
+[[ ! -d "{{ MAGENTO_PATH }}/var/cache" ]] || rm -rf {{ MAGENTO_PATH }}/var/cache
+[[ ! -d "{{ MAGENTO_PATH }}/var/full_page_cache" ]] || rm -rf {{ MAGENTO_PATH }}/var/full_page_cache

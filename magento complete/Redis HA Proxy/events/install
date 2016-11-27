@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+if [ -x /usr/bin/yum ]; then
+    yum install -y telnet
+else
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -y -q update
+    apt-get -y -q install telnet
+fi
+
+# If SELinux enabled, HAProxy needs permission to bind to the Redis port
+if [[ -e "/etc/sysconfig/selinux" && -n "$(sestatus | grep 'enabled')" ]]
+then
+    yum install -y policycoreutils-python
+    setsebool -P haproxy_connect_any on
+fi

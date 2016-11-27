@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+# If SELinux enabled, httpd scripts by default are not allowed to connect out to the network.
+if [[ -e "/etc/sysconfig/selinux" && -n "$(sestatus | grep 'enabled')" ]]
+then
+	yum install policycoreutils-python -y
+	setsebool -P httpd_can_network_connect 1
+fi
+
+# Set the PHP user and group
+if [[ -e /etc/redhat-release || -e /etc/system-release ]]
+then
+    elasticbox set php.PHP_USER "nginx"
+    elasticbox set php.PHP_GROUP "nginx"
+else
+    elasticbox set php.PHP_USER "www-data"
+    elasticbox set php.PHP_GROUP "www-data"
+fi
+
+
+# Download magento
+mkdir -p {{ MAGENTO_PATH }}
+
+curl -ks --retry 10 {{ MAGENTO_URL }} | tar xz -C {{ MAGENTO_PATH }}
+[[ -d "{{ MAGENTO_PATH }}/app/var/log" ]] || mkdir -p -m 777 "{{ MAGENTO_PATH }}/app/var/log"
+chown -R {{ nginx.NGINX_USER }}:{{ nginx.NGINX_GROUP }} {{ MAGENTO_PATH }}

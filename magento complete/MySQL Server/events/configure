@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# Load the my.cnf file if present
+if [[ -f /etc/my.cnf ]]
+then
+    curl -ks {{ MY_CNF }} | elasticbox config -o /etc/my.cnf
+else
+    curl -ks {{ MY_CNF }} | elasticbox config -o /etc/mysql/my.cnf
+fi
+
+if [[ ! -d {{ DATA_DIRECTORY }} ]]
+then
+    mysql_install_db --user=mysql --ldata={{ DATA_DIRECTORY }}
+fi
+
+# Initialize Database
+mkdir -p /etc/mysql/conf.d/
+mkdir -p /var/log/mysql
+chown -R mysql:mysql /var/log/mysql/
+
+if [[ -e "/etc/sysconfig/selinux" && -n "$(sestatus | grep 'enabled')" ]]
+then
+	semanage fcontext -a -t mysqld_db_t "/var/log/mysql(/.*)?"
+	restorecon -Rv /var/log/mysql
+fi
+
+if [[ -e /etc/redhat-release || -e /etc/system-release ]]
+then
+    service mysqld restart
+else
+    service mysql restart
+fi
+
+{% if master.MYSQL_CLUSTER == "Member" %}
+# Reset variables
+elasticbox set DATABASE_NAME "{{ master.DATABASE_NAME }}"
+elasticbox set MYSQL_USER "{{ master.MYSQL_USER }}"
+elasticbox set MYSQL_PASSWORD "{{ master.MYSQL_PASSWORD }}"
+
+if mysql --user="root" --execute "SHOW SLAVE STATUS" | grep -q Master_Server_Id
+then
+    # Print current slave status
+    mysql --user="root" --execute "SHOW SLAVE STATUS\G;"
+else
+    mysql --user="root" << \
+----STATEMENTS----
+CHANGE MASTER TO MASTER_HOST="{{ master.address.private }}",
+                 MASTER_USER="{{ master.MYSQL_USER }}",
+                 MASTER_PASSWORD="{{ master.MYSQL_PASSWORD }}";
+
+GRANT ALL ON *.* to "{{ master.MYSQL_USER }}"@"%" IDENTIFIED BY "{{ master.MYSQL_PASSWORD }}";
+FLUSH PRIVILEGES;
+----STATEMENTS----
+
+    # Restore dump
+    until mysqldump --host={{ master.address.private }} \
+                --user="{{ master.MYSQL_USER }}" \
+                --password="{{ master.MYSQL_PASSWORD }}" \
+                --compress \
+                --skip-lock-tables \
+                --single-transaction \
+                --flush-logs \
+                --hex-blob \
+                --master-data \
+                --apply-slave-statements \
+                --databases {{ master.DATABASE_NAME }} | mysql --user="root"
+    do
+        echo "Retrying to retrieve a dump from master" && sleep 15
+    done
+
+    # Notify incoming bindings the instance is ready
+    elasticbox set MYSQL_CLUSTER "Member"
+    elasticbox notify
+fi
+
+{% else %}
+# Disconnect if slave, create database if doesn't exits and reset crendentials
+mysql --user="root" << \
+----STATEMENTS----
+STOP SLAVE;
+RESET SLAVE ALL;
+
+CREATE DATABASE IF NOT EXISTS {{ DATABASE_NAME }};
+
+GRANT ALL ON *.* to "{{ MYSQL_USER }}"@"%" IDENTIFIED BY "{{ MYSQL_PASSWORD }}";
+FLUSH PRIVILEGES;
+----STATEMENTS----
+{% endif %}
+
+
+{% if master.MYSQL_CLUSTER == "Initiate" %}
+# Notify incoming bindings the instance is ready
+elasticbox set MYSQL_CLUSTER "Member"
+elasticbox notify
+{% endif %}

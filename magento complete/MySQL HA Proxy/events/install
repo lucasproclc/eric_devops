@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+if [[ -e /etc/redhat-release || -e /etc/system-release ]]
+then
+    OS=$(rpm -q --whatprovides redhat-release | cut -d"-" -f1)
+
+    case $OS in
+	    redhat)
+	    	yum -y install mysql
+            ;;
+        centos)
+            yum -y install http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm || true
+            yum -y install mysql
+            ;;
+        system)
+            yum -y install mysql
+            ;;
+        fedora)
+            yum -y install mysql
+            ;;
+    esac
+    
+else
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -q -y update
+    apt-get -q -y install mysql-client
+fi

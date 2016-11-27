@@ -1,0 +1,138 @@
+description: Magento Community Edition is open source eCommerce
+icon: 638daa8e-df07-444b-a506-eeb29b814a8b
+id: 638daa8e-df07-444b-a506-eeb29b814a8b
+name: Magento Store
+schema: http://elasticbox.net/schemas/boxes/application
+services:
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: de1841f7-cfbe-4443-a996-d13807271a18
+    latest: true
+    variables:
+    - name: mysql.haproxy.servers
+      value: mysql
+    - name: redis.haproxy.servers
+      value: ''
+    - name: nfs.server
+      value: nfs
+  name: magento-a
+  policy:
+    requirements:
+    - internal
+    - linux
+    - zone-a
+    variables: []
+  tags:
+  - magento
+  - zone-a
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: de1841f7-cfbe-4443-a996-d13807271a18
+    latest: true
+    variables:
+    - name: mysql.haproxy.servers
+      value: mysql
+    - name: redis.haproxy.servers
+      value: ''
+    - name: nfs.server
+      value: nfs
+  name: magento-b
+  policy:
+    requirements:
+    - internal
+    - linux
+    - zone-b
+    variables: []
+  tags:
+  - magento
+  - zone-b
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: f2e115c9-0243-470e-882f-3484a4653d9d
+    latest: true
+    variables:
+    - name: master
+      value: mysql
+    - name: MYSQL_CLUSTER
+      value: Initiate
+  name: mysql-a
+  policy:
+    requirements:
+    - linux
+    - internal
+    - zone-a
+    variables: []
+  tags:
+  - mysql
+  - zone-a
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: f2e115c9-0243-470e-882f-3484a4653d9d
+    latest: true
+    variables:
+    - name: master
+      value: mysql
+  name: mysql-b
+  policy:
+    requirements:
+    - linux
+    - internal
+    - zone-b
+    variables: []
+  tags:
+  - mysql
+  - zone-b
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: 3e8a7f90-c010-4ad8-adb2-6a94c07c7fec
+    latest: false
+    variables: []
+  name: nfs-server
+  policy:
+    requirements:
+    - linux
+    - internal
+    variables: []
+  tags:
+  - nfs
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: b252bb6e-99e4-48b8-b5de-8c5dc4603e14
+    latest: true
+    variables:
+    - name: servers
+      value: magento
+  name: load-balancer-b
+  policy:
+    requirements:
+    - linux
+    - public
+    - zone-b
+    variables: []
+  tags:
+  - load-balancer
+- automatic_reconfiguration: true
+  automatic_updates: 'off'
+  box:
+    id: b252bb6e-99e4-48b8-b5de-8c5dc4603e14
+    latest: true
+    variables:
+    - name: servers
+      value: magento
+  name: load-balancer-a
+  policy:
+    requirements:
+    - linux
+    - public
+    - zone-a
+    variables: []
+  tags:
+  - load-balancer
+variables: []
+

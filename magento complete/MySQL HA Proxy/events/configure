@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+service haproxy restart
+
+# Add mysql health check user
+{% for binding in haproxy.servers %}
+{% if binding['MysqlEndpoint'] %}
+until mysql --user="{{ binding.MysqlUser }}" \
+      --password="{{ binding.MysqlPassword }}" \
+      --host="{{ binding.MysqlEndpoint }}" \
+      --wait \
+      --connect-timeout=3600 \
+      --execute "INSERT INTO mysql.user (Host, User) values ('%', '{{ instance.id }}') ON DUPLICATE KEY UPDATE Host = values(Host); FLUSH PRIVILEGES;"
+do
+    echo "Trying to connect to server: {{ binding.MysqlEndpoint }}" && sleep 5
+done
+{% else %}
+until mysql --user="{{ binding.MYSQL_USER }}" \
+      --password="{{ binding.MYSQL_PASSWORD }}" \
+      --host="{{ binding.address.private }}" \
+      --wait \
+      --connect-timeout=3600 \
+      --execute "INSERT INTO mysql.user (Host, User) values ('%', '{{ instance.id }}') ON DUPLICATE KEY UPDATE Host = values(Host); FLUSH PRIVILEGES;"
+do
+    echo "Trying to connect to server: {{ binding.address.private }}" && sleep 5
+done
+{% endif %}
+{% endfor %}

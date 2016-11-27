@@ -1,0 +1,28 @@
+description: HA Proxy for Redis cluster
+icon: 053c6467-13e4-47fb-b6cf-46f51e6c2294
+id: 053c6467-13e4-47fb-b6cf-46f51e6c2294
+name: Redis HA Proxy
+requirements:
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- automatic_updates: major
+  name: haproxy
+  required: false
+  type: Box
+  value: 87830b58-ceaf-4790-81d1-4511816b012f
+  visibility: private
+- name: CONFIG_FILE
+  required: false
+  scope: haproxy
+  type: File
+  value: files/haproxy.conf
+  visibility: public
+- name: MODE
+  options: http,tcp,health
+  required: false
+  scope: haproxy
+  type: Options
+  value: tcp
+  visibility: public
+

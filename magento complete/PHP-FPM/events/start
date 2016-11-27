@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+if ! pgrep -f php-fpm > /dev/null
+then 
+    php5-fpm --daemonize
+else
+    pkill -f php-fpm
+    php5-fpm --daemonize
+fi

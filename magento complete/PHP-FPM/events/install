@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+if [[ -e /etc/redhat-release || -e /etc/system-release ]]
+then
+    OS=$(rpm -q --whatprovides redhat-release | cut -d"-" -f1)
+    RELEASE=$(rpm -q --whatprovides redhat-release | cut -d"-" -f3)
+    case $OS in
+	    redhat|centos)
+	    	yum -y install epel-release
+            if [[ -z "$(yum repolist | grep 'webtatic')" ]]
+            then
+                if [[ "${RELEASE}" == "6" ]]
+                then
+                    rpm -Uvh https://mirror.webtatic.com/yum/el${RELEASE}/latest.rpm
+                else
+                    rpm -Uvh https://mirror.webtatic.com/yum/el${RELEASE}/webtatic-release.rpm       
+                fi
+            fi
+            
+            yum install -y php55w php55w-cli php55w-common php55w-fpm php55w-mysql php55w-curl php55w-mbstring php55w-mcrypt php55w-opcache php55w-gd php55w-json php55w-xml
+            ;;
+        system)
+            yum -y install epel-release
+            yum install -y php55 php55-cli php55-common php55-fpm php55-mysqlnd php55-mbstring php55-mcrypt php55-opcache php55-gd php55-json php55-xmlrpc 
+            ;;
+        *)
+            echo "OS: ${OS}, Release: ${RELEASE} not supported"
+            ;;
+    esac
+    
+    yum clean all
+else
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -y update
+    apt-get -y install php5 php5-cli php5-common php5-fpm php5-mysql php5-curl php5-mcrypt php5-gd php5-json php5-xmlrpc
+fi

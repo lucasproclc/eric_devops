@@ -1,0 +1,40 @@
+description: Reliable, High Performance, TCP / HTTP Load Balancer
+icon: haproxy.png
+id: 87830b58-ceaf-4790-81d1-4511816b012f
+name: HAProxy
+requirements:
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- name: http
+  required: false
+  type: Port
+  value: '80'
+  visibility: public
+- name: fallback_binding_port
+  required: false
+  type: Port
+  value: '80'
+  visibility: public
+- name: CONFIG_FILE_NAME
+  required: false
+  type: Text
+  value: haproxy.cfg
+  visibility: public
+- name: CONFIG_FILE
+  required: false
+  type: File
+  value: files/haproxy.conf
+  visibility: public
+- name: MODE
+  options: http,tcp,health
+  required: false
+  type: Options
+  value: http
+  visibility: public
+- name: servers
+  required: false
+  type: Binding
+  value: AnyBox
+  visibility: private
+

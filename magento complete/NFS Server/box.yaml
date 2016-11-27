@@ -1,0 +1,19 @@
+description: shares files using Network File System protocol
+icon: nfsnserver.png
+id: 3e8a7f90-c010-4ad8-adb2-6a94c07c7fec
+name: NFS Server
+requirements:
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- name: EXPORT_HOST
+  required: false
+  type: Text
+  value: 10.0.0.0/8
+  visibility: private
+- name: EXPORT_DIRECTORY
+  required: false
+  type: Text
+  value: /data/export
+  visibility: internal
+

@@ -1,0 +1,50 @@
+description: MySQL is the world's most popular open-source database
+icon: mysql.png
+id: f2e115c9-0243-470e-882f-3484a4653d9d
+name: MySQL Server
+requirements:
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- name: DATABASE_NAME
+  required: true
+  type: Text
+  value: default_db
+  visibility: public
+- name: MYSQL_USER
+  required: true
+  type: Text
+  value: default_user
+  visibility: public
+- name: DATA_DIRECTORY
+  required: false
+  type: Text
+  value: /var/lib/mysql
+  visibility: internal
+- name: MYSQL_PASSWORD
+  required: true
+  type: Password
+  value: default_password
+  visibility: public
+- name: MYSQL_CLUSTER
+  options: Initiate, Join
+  required: false
+  type: Options
+  value: Join
+  visibility: private
+- name: MysqlPort
+  required: false
+  type: Port
+  value: '3306'
+  visibility: public
+- name: MY_CNF
+  required: false
+  type: File
+  value: files/my.cnf
+  visibility: internal
+- name: master
+  required: false
+  type: Binding
+  value: 53b978c0-3c68-4a13-99b6-035aad38e95c
+  visibility: private
+

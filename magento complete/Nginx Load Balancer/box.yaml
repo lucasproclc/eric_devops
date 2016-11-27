@@ -1,0 +1,50 @@
+description: HTTP load balancer using the Nginx web server
+icon: 0819b5d8-047c-4783-8051-e48399a1c840
+id: b252bb6e-99e4-48b8-b5de-8c5dc4603e14
+name: Nginx Load Balancer
+requirements:
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- name: http
+  required: true
+  type: Port
+  value: '80'
+  visibility: public
+- name: fallback_binding_port
+  required: false
+  type: Port
+  value: '80'
+  visibility: public
+- name: NGINX_CONF
+  required: false
+  type: File
+  value: files/nginx.conf
+  visibility: public
+- name: VIRTUAL_CONF
+  required: false
+  type: File
+  value: files/virtual.conf
+  visibility: public
+- name: SSL_ENABLED
+  options: no,yes
+  required: false
+  type: Options
+  value: 'no'
+  visibility: public
+- name: PUBLIC_SSL_CERTIFICATE
+  required: false
+  type: File
+  value: files/public.crt
+  visibility: public
+- name: PRIVATE_SSL_CERTIFICATE
+  required: false
+  type: File
+  value: files/private.key
+  visibility: public
+- name: servers
+  required: false
+  type: Binding
+  value: AnyBox
+  visibility: private
+

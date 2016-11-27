@@ -1,0 +1,48 @@
+#!/bin/bash -e
+  
+if [[ -e /etc/redhat-release || -e /etc/system-release ]]
+then
+    OS=$(rpm -q --whatprovides redhat-release | cut -d"-" -f1)
+    RELEASE=$(rpm -q --whatprovides redhat-release | cut -d"-" -f3)
+    case $OS in
+	    redhat)
+            if [[ -z "$(yum repolist | grep 'nginx')" ]]
+            then
+                rpm -ivh http://nginx.org/packages/rhel/${RELEASE}/noarch/RPMS/nginx-release-rhel-${RELEASE}-0.el${RELEASE}.ngx.noarch.rpm
+	    	fi
+            
+            yum -y install nginx
+            ;;
+        centos)
+            if [[ -z "$(yum repolist | grep 'nginx')" ]]
+            then
+                rpm -ivh http://nginx.org/packages/centos/${RELEASE}/noarch/RPMS/nginx-release-centos-${RELEASE}-0.el${RELEASE}.ngx.noarch.rpm
+            fi
+            
+            yum -y install nginx
+            ;;
+        system)
+            yum -y install nginx
+            ;;
+        fedora)
+            yum -y install nginx
+            ;;
+    esac
+    
+    elasticbox set NGINX_USER "nginx"
+    elasticbox set NGINX_GROUP "nginx"
+else
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -y update
+    apt-get -y install python-software-properties software-properties-common
+
+    # Add the nginx repositories
+    add-apt-repository -y ppa:nginx/stable
+
+    apt-get -y update
+    apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install nginx
+    elasticbox set NGINX_USER "www-data"
+    elasticbox set NGINX_GROUP "www-data"
+fi
+
+rm -rf /etc/nginx/conf.d/*

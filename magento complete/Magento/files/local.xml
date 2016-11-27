@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<config>
+    <global>
+        <install>
+            <date><![CDATA[Sun, 23 Aug 2015 22:13:07 +0000]]></date>
+        </install>
+        <crypt>
+            <key><![CDATA[{{ MAGENTO_CRYPTOKEY }}]]></key>
+        </crypt>
+        <disable_local_modules>false</disable_local_modules>
+        <resources>
+            <db>
+                <table_prefix><![CDATA[]]></table_prefix>
+            </db>
+            <default_setup>
+                <connection>
+                    <host><![CDATA[127.0.0.1]]></host>
+                    <username><![CDATA[{{ mysql.haproxy.servers.MYSQL_USER or mysql.haproxy.servers.MysqlUser }}]]></username>
+                    <password><![CDATA[{{ mysql.haproxy.servers.MYSQL_PASSWORD or mysql.haproxy.servers.MysqlPassword }}]]></password>
+                    <dbname><![CDATA[{{ mysql.haproxy.servers.DATABASE_NAME or mysql.haproxy.servers.DatabaseName }}]]></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model><![CDATA[mysql4]]></model>
+                    <type><![CDATA[pdo_mysql]]></type>
+                    <pdoType><![CDATA[]]></pdoType>
+                    <active>1</active>
+                </connection>
+            </default_setup>
+{% if mysql.haproxy.servers and mysql.haproxy.servers.MysqlReadEndpoint %}
+            <core_write>
+                <connection>
+                    <host><![CDATA[127.0.0.1]]></host>
+                    <username><![CDATA[{{ mysql.haproxy.servers.MysqlUser }}]]></username>
+                    <password><![CDATA[{{ mysql.haproxy.servers.MysqlPassword }}]]></password>
+                    <dbname><![CDATA[{{ mysql.haproxy.servers.DatabaseName }}]]></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model><![CDATA[mysql4]]></model>
+                    <type><![CDATA[pdo_mysql]]></type>
+                    <pdoType><![CDATA[]]></pdoType>
+                    <active>1</active>
+                </connection>
+            </core_write>
+            <core_read>
+                <connection>
+                    <host><![CDATA[{{ mysql.haproxy.servers.MysqlReadEndpoint }}]]></host>
+                    <username><![CDATA[{{ mysql.haproxy.servers.MysqlUser }}]]></username>
+                    <password><![CDATA[{{ mysql.haproxy.servers.MysqlPassword }}]]></password>
+                    <dbname><![CDATA[{{ mysql.haproxy.servers.DatabaseName }}]]></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model><![CDATA[mysql4]]></model>
+                    <type><![CDATA[pdo_mysql]]></type>
+                    <pdoType><![CDATA[]]></pdoType>
+                    <active>1</active>
+                </connection>
+            </core_read>
+{% endif %}
+        </resources>
+{% if redis.haproxy.servers %}
+        <cache>
+            <backend>Mage_Cache_Backend_Redis</backend>
+            <backend_options>
+                <server>127.0.0.1</server>
+                <port>{{ redis.haproxy.servers.RedisPort }}</port>
+                <persistent></persistent>               
+                <database>0</database>
+                <password>{% if redis.haproxy.servers.REDIS_PASSWORD %}{{ redis.haproxy.servers.REDIS_PASSWORD }}{% endif %}</password>
+                <force_standalone>0</force_standalone>
+                <connect_retries>1</connect_retries>
+                <read_timeout>10</read_timeout>        
+                <automatic_cleaning_factor>0</automatic_cleaning_factor>
+                <compress_data>1</compress_data>        
+                <compress_tags>1</compress_tags>   
+                <compress_threshold>20480</compress_threshold>
+                <compression_lib>gzip</compression_lib>
+            </backend_options>
+        </cache>
+        <session_save>db</session_save>
+        <redis_session>                      
+            <host>127.0.0.1</host>           
+            <port>{{ redis.haproxy.servers.RedisPort }}</port>
+            <password>{% if redis.haproxy.servers.REDIS_PASSWORD %}{{ redis.haproxy.servers.REDIS_PASSWORD }}{% endif %}</password>       
+            <timeout>2.5</timeout>   
+            <persistent></persistent>         
+            <db>2</db>                      
+            <compression_threshold>2048</compression_threshold>
+            <compression_lib>gzip</compression_lib>            
+            <log_level>4</log_level>               
+            <max_concurrency>6</max_concurrency>                 
+            <break_after_frontend>5</break_after_frontend>       
+            <break_after_adminhtml>30</break_after_adminhtml>
+            <bot_lifetime>7200</bot_lifetime>                    
+        </redis_session>
+{% else %}
+        <session_save><![CDATA[files]]></session_save>
+{% endif %}
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <frontName><![CDATA[admin]]></frontName>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+</config>

@@ -1,0 +1,88 @@
+description: Magento Web Layer
+icon: f4dd017f-4bec-42f4-9614-bd27fd8baf74
+id: de1841f7-cfbe-4443-a996-d13807271a18
+name: Magento
+requirements:
+- internal
+- linux
+schema: http://elasticbox.net/schemas/boxes/script
+variables:
+- name: LOCAL_PATH
+  required: true
+  scope: nfs
+  type: Text
+  value: /mnt/media
+  visibility: internal
+- name: CONFIG_FILE
+  required: false
+  scope: redis.haproxy
+  type: File
+  value: files/haproxy.conf
+  visibility: public
+- name: CONFIG_FILE_NAME
+  required: false
+  scope: redis.haproxy
+  type: Text
+  value: redis.cfg
+  visibility: public
+- name: MAGENTO_URL
+  required: false
+  type: Text
+  value: https://s3-us-west-1.amazonaws.com/ebx-public/magento-1.9.2.2.tar-2015-10-27-03-19-32.gz
+  visibility: internal
+- name: SERVER_NAME
+  required: false
+  type: Text
+  value: localhost
+  visibility: public
+- name: http
+  required: false
+  type: Port
+  value: '80'
+  visibility: public
+- name: MAGENTO_CONF
+  required: false
+  type: File
+  value: files/magento.conf
+  visibility: internal
+- name: MAGENTO_CONFIG
+  required: false
+  type: File
+  value: files/local.xml
+  visibility: internal
+- name: MAGENTO_PATH
+  required: false
+  type: Text
+  value: /opt/magento
+  visibility: internal
+- automatic_updates: major
+  name: redis
+  required: false
+  type: Box
+  value: 053c6467-13e4-47fb-b6cf-46f51e6c2294
+  visibility: public
+- automatic_updates: major
+  name: mysql
+  required: false
+  type: Box
+  value: f6deab86-3744-4be3-bd48-804697859423
+  visibility: public
+- automatic_updates: major
+  name: nginx
+  required: false
+  type: Box
+  value: 8e176772-5c6c-4d5a-8f6e-cbf342142520
+  visibility: internal
+- automatic_updates: major
+  name: php
+  required: false
+  type: Box
+  value: ed085cfd-8707-4ef7-9611-6e84498d27c6
+  visibility: internal
+- automatic_updates: major
+  name: nfs
+  required: false
+  type: Box
+  value: 320e8be7-5d05-4f74-a040-5d74836ae608
+  visibility: public
+
