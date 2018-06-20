@@ -26,7 +26,28 @@ resource "azurerm_network_security_group" "nsg_web" {
     source_address_prefix      	= "Internet"
     destination_address_prefix 	= "*"
   }
-
+	 security_rule {
+	name 			= "AllowSSH"
+	priority 		= 210
+	direction 		= "Inbound"
+	access 		        = "Allow"
+	protocol 		= "Tcp"
+	source_port_range       = "*"
+    destination_port_range     	= "8080"
+    source_address_prefix      	= "*"
+    destination_address_prefix 	= "*"
+  }
+ security_rule {
+	name 			= "AllowSSH"
+	priority 		= 220
+	direction 		= "Inbound"
+	access 		        = "Allow"
+	protocol 		= "Tcp"
+	source_port_range       = "*"
+    destination_port_range     	= "8989"
+    source_address_prefix      	= "*"
+    destination_address_prefix 	= "*"
+  }
   tags {
 	group = "LinuxAcademy"
   }
