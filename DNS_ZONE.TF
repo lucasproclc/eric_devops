@@ -1,5 +1,5 @@
 resource "azurerm_dns_zone" "la_dns" {
-  name                  = "eric.com.com"
+  name                  = "joe.com"
   resource_group_name   = "${azurerm_resource_group.terraform_rg.name}"
 }
 
